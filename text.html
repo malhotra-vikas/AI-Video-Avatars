@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Golf Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            /* Stack items vertically */
+            justify-content: flex-start;
+            /* Align content to the start */
+            align-items: center;
+            /* Center horizontally */
+            background-color: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .header-text {
+            margin-top: 10vh;
+            /* Add some space at the top */
+            margin-bottom: 2vh;
+            /* Add some space below the header text */
+        }
+
+        .center-div {
+            width: 50vw;
+            height: 80vh;
+            background-color: rgb(144, 142, 150);
+            border-radius: 15px;
+            padding: 5px;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            flex-shrink: 1;
+            /* Allow the box to shrink if needed */
+        }
+
+        iframe {
+            border: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        @media only screen and (max-width: 600px) {
+            .center-div {
+                width: 80vw;
+                height: 40vh;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header-text">Welcome to Golf Pro Fitting</div>
+    <!-- Header Text Above Blue Box -->
+    <div class="center-div">
+        <script>
+            // Ensure this code block is within a script tag
+            var customerEmail = '{{ customer.login.email | json }}'; // Use the correct Liquid object path
+            console.log(customerEmail);
+        </script>
+        <iframe style="border: none;" srcdoc="
+          <body>
+          <script src='https://cdn.botpress.cloud/webchat/v0/inject.js'></script>
+          <script>
+          window.botpressWebChat.init({
+              'composerPlaceholder': 'Experience Masters Golf Fitting',
+              'botConversationDescription': 'Experience Masters Golf Fitting',
+              'botId': '7d63af85-b900-41e8-b745-cf45f0a9e1c9',
+              'hostUrl': 'https://cdn.botpress.cloud/webchat/v0',
+              'messagingUrl': 'https://messaging.botpress.cloud',
+              'clientId': '7d63af85-b900-41e8-b745-cf45f0a9e1c9',
+              'webhookId': '653cb6b6-d039-4921-8ee3-e66985a8295f',
+              'enableConversationDeletion': true,
+              'className': 'webchatIframe',
+              'containerWidth': '100%25',
+              'layoutWidth': '100%25',
+              'showTimestamp': true,
+              'enablePersistHistory': true,
+              'hideWidget': false,
+              'showCloseButton': false,
+              'disableAnimations': true,
+              'closeOnEscape': false,
+              'showConversationsButton': false,
+              'enableTranscriptDownload': true,
+              'userData': {
+                'email': 'arora.silky@gmail.com'
+              },
+              'stylesheet':'https://webchat-styler-css.botpress.app/prod/code/3fcd3e4e-d5bc-4bf5-8699-14b621b3ada2/v31782/style.css'
+          });
+          window.botpressWebChat.onEvent(function () { window.botpressWebChat.sendEvent({ type: 'show' }) }, ['LIFECYCLE.LOADED']);
+          </script></body>
+        " width="100%" height="100%">
+        </iframe>
+    </div>
+</body>
+
+</html>
