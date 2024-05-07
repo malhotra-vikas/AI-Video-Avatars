@@ -21,6 +21,7 @@ def publishVideo(videoPath, videoName):
     headers = {}
     url = ""
 
-    response = requests.request("POST", prod_url, headers=headers, data=payload, files=files)
+#    response = requests.request("POST", prod_url, headers=headers, data=payload, files=files)
+    print("Skipping Remote Publish")
 
-    print("Publish Video Respnse is ", response.text)
+    print("Publish Video Respnse is ")

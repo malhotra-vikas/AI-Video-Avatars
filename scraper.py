@@ -1,32 +1,35 @@
 """
-These packages don't necessarily need to be installed locally.
-They will be added in the container image defined below.
+Run this example: beam run scraper.py:scrape_site
 """
-from beam import App, Runtime, Image, Output
+from beam import App, Runtime, Image
 
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin
+from transformers import pipeline
 
 app = App(
-    name="web_scraper",
+    name="web-scraper",
     runtime=Runtime(
+        cpu=1,
+        memory="8Gi",
         image=Image(
-            python_packages=["requests", "beautifulsoup4"],
+            python_version="python3.8",
+            python_packages=["bs4", "transformers", "torch"],
         ),
     ),
 )
 
 
-@app.run(outputs=[Output(path="results.txt")])
-def scrape_wikipedia():
-    url = "https://en.wikipedia.org/wiki/Main_Page"
+@app.run()
+def scrape_site():
+    url = "https://wcca.wicourts.gov/caseDetail.html?caseNo=2024TR010857&countyNo=40&index=0&isAdvanced=true&mode=details#charges"
 
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
 
-    for link in soup.find_all("a", href=True):
-        absolute_link = urljoin(url, link["href"])
-        with open("results.txt", "a") as file:
-            print(f"Found link: {absolute_link}")
-            file.write(absolute_link + "\n")
+    # Find all <div> elements
+    div_elements = soup.find_all('div')
+    
+    # Print the list of <div> elements
+    for i, div in enumerate(div_elements, start=1):
+        print(f"Div {i}: {div}")

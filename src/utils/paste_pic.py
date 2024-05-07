@@ -5,7 +5,7 @@ import uuid
 
 from src.utils.videoio import save_video_with_watermark 
 
-def paste_pic(video_path, pic_path, crop_info, new_audio_path, full_video_path, extended_crop=False):
+def paste_pic(video_path, pic_path, crop_info, new_audio_path, full_video_path, character, extended_crop=False):
 
     if not os.path.isfile(pic_path):
         raise ValueError('pic_path must be a valid path to video/image file')
@@ -65,5 +65,5 @@ def paste_pic(video_path, pic_path, crop_info, new_audio_path, full_video_path, 
 
     out_tmp.release()
 
-    save_video_with_watermark(tmp_path, new_audio_path, full_video_path, watermark=False)
+    save_video_with_watermark(tmp_path, new_audio_path, full_video_path, character, watermark=False)
     #os.remove(tmp_path)

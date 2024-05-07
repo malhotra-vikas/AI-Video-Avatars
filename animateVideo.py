@@ -89,11 +89,13 @@ app = App(
                 "facexlib==0.3.0",
                 "gradio",
                 "gfpgan",
+                "realesrgan",
                 "av",
                 "safetensors",
                 "xformers",
                 "pillow",
-                "accelerate"
+                "accelerate",
+                "triton"
             ],
             commands=["apt-get update && apt-get install -y ffmpeg"]
         ),
@@ -152,7 +154,7 @@ def download_file(url, directory, filename):
 
 # This function runs once when the container boots
 def load_models():
-
+    
     # Download each file
     for url, filename in files_to_download:
         download_file(url, "./models/checkpoints", filename)
@@ -190,7 +192,15 @@ def generate_image(**inputs):
         imageToBeAnimated = inputs.get("image", "./data/jesus.png")  # Specify a real default if applicable
 #        result_dir = output_files
         seed_video_path = inputs.get("seed", "XXX")
-        character = inputs.get("character", "jesus")
+        character = inputs.get("character", "Vikas")
+        enhancer = inputs.get("enhancer", None)  # Assuming False as a sensible default
+        backgroundEnhancer = inputs.get("background-enhancer", None)  # Assuming False as a sensible default
+        preprocess = inputs.get("preprocess", "crop")  # Assuming False as a sensible default
+        
+        print(f"enhancer {enhancer} ")
+        print(f"backgroundEnhancer {backgroundEnhancer} ")
+        print(f"preprocess {preprocess} ")
+
 
         current_root_path = '/workspace'
 
@@ -209,7 +219,7 @@ def generate_image(**inputs):
         device = "cuda"
         size = 256
         old_version = False
-        preprocess = 'crop'
+        preprocess = preprocess
         checkpoint_dir = 'checkpoints'
         sadtalker_paths = init_path(cache_path, checkpoint_dir, os.path.join(current_root_path, 'src/config'), 256, False, 'crop')
         ref_eyeblink = None
@@ -221,10 +231,11 @@ def generate_image(**inputs):
         input_pitch_list = None
         input_roll_list = None
         expression_scale = 1.
-        enhancer = None
+        enhancer = enhancer
         background_enhancer = None
         verbose = False
 
+        print(f"enhancer {enhancer} ")
         print(f"sadtalker_paths  {sadtalker_paths} ")
 
 
@@ -331,7 +342,7 @@ def generate_image(**inputs):
 
     # This is the most expensive step in the Rendering TODO
     result = animate_from_coeff.generate(data, save_dir, imageToBeAnimated, crop_info, seed_video_path, character, \
-                                enhancer=enhancer, background_enhancer=background_enhancer, preprocess=preprocess, img_size=size)
+                                enhancer, background_enhancer=background_enhancer, preprocess=preprocess, img_size=size)
     
     event_marker = time.time()  # Record the marker time after the code execution
     print(f"After Generate steps: {event_marker - start_time} seconds")
@@ -361,15 +372,27 @@ def convertAudioToWav(mp3Path) :
 
     response = requests.get(mp3Path)
 
-    try:
-        # Define the path where you want to save the MP3 file
+    # Define the path where you want to save the MP3 file
+    if mp3Path.lower().endswith('.mp3'):
         filepath = './data/samples/downloaded_file.mp3'
+    else:
+        filepath = './data/samples/downloaded_file.wav'
+
+
+    try:
         with open(filepath, 'wb') as file:
             file.write(response.content)
         print(f"File downloaded successfully and saved as {filepath}")
 
-        # Load the mp3 file
-        audio = AudioSegment.from_mp3(filepath)
+        if mp3Path.lower().endswith('.mp3'):
+            # Load the mp3 file
+            audio = AudioSegment.from_mp3(filepath)
+
+        else:
+            # Load the wav file
+            audio = AudioSegment.from_wav(filepath)
+
+
         wav_audio_name = os.path.splitext(os.path.split(filepath)[-1])[0]
         print("Exporting file by name", wav_audio_name)
 
@@ -378,6 +401,7 @@ def convertAudioToWav(mp3Path) :
         # Export as wav
         audio.export(wav_path, format="wav")
         print("Exported to path ", wav_path)
+
     except Exception as e:
         print("Exception while converting to WAV", e)
 

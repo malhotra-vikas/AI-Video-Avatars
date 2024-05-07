@@ -27,3 +27,4 @@ transformers
 xformers
 pillow
 accelerate
+requests

@@ -117,6 +117,7 @@ class CropAndExtract():
             oy1, oy2, ox1, ox2 = cly+ly, cly+ry, clx+lx, clx+rx
             crop_info = ((ox2 - ox1, oy2 - oy1), crop, quad)
         elif 'full' in crop_or_resize.lower():
+            print ("In Full")
             x_full_frames, crop, quad = self.propress.crop(x_full_frames, still=True if 'ext' in crop_or_resize.lower() else False, xsize=512)
             clx, cly, crx, cry = crop
             lx, ly, rx, ry = quad
@@ -135,6 +136,8 @@ class CropAndExtract():
         # save crop info
         for frame in frames_pil:
             cv2.imwrite(png_path, cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR))
+
+        print ("landmarks_path is ", landmarks_path)
 
         # 2. get the landmark according to the detected face. 
         if not os.path.isfile(landmarks_path): 

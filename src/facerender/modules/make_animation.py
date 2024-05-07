@@ -118,7 +118,14 @@ def make_animation(source_image, source_semantics, target_semantics,
         predictions = []
 
         kp_canonical = kp_detector(source_image)
+        print("AAAA")
+        print("source_image   ", source_image)
+        print("kp_canonical   ", kp_canonical)
+        print("mapping   ", mapping)
+        print("source_semantics ", source_semantics)
         he_source = mapping(source_semantics)
+        print("he_source    ", he_source)
+
         kp_source = keypoint_transformation(kp_canonical, he_source)
     
         for frame_idx in tqdm(range(target_semantics.shape[1]), 'Face Renderer:'):

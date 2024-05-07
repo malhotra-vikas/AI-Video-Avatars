@@ -156,7 +156,7 @@ class AnimateFromCoeff():
 
         return checkpoint['epoch']
 
-    def generate(self, x, video_save_dir, pic_path, crop_info, seed_video_path, character, enhancer=None, background_enhancer=None, preprocess='crop', img_size=256):
+    def generate(self, x, video_save_dir, pic_path, crop_info, seed_video_path, character, enhancer, background_enhancer=None, preprocess='crop', img_size=256):
         print(f"Seed Video Path is  {seed_video_path}  ") 
 
         start_t = time.time()
@@ -170,6 +170,7 @@ class AnimateFromCoeff():
 
         tracker_t = time.time()
         print(f"Generating video - Step-1 {tracker_t - start_t} seconds") 
+        print(f"Generating video - Step-1 {x} ") 
 
         if 'yaw_c_seq' in x:
             yaw_c_seq = x['yaw_c_seq'].type(torch.FloatTensor)
@@ -255,7 +256,7 @@ class AnimateFromCoeff():
             video_name_full = x['video_name']  + '_full.mp4'
             full_video_path = os.path.join(video_save_dir, video_name_full)
             return_path = full_video_path
-            paste_pic(path, pic_path, crop_info, new_audio_path, full_video_path, extended_crop= True if 'ext' in preprocess.lower() else False)
+            paste_pic(path, pic_path, crop_info, new_audio_path, full_video_path, character, extended_crop= True if 'ext' in preprocess.lower() else False)
             print(f'The generated video is named {video_save_dir}/{video_name_full}') 
         else:
             full_video_path = av_path 
@@ -265,6 +266,8 @@ class AnimateFromCoeff():
 
         #### paste back then enhancers
         if enhancer:
+            print(f"In enhancer Generating video {enhancer}") 
+
             video_name_enhancer = x['video_name']  + '_enhanced.mp4'
             enhanced_path = os.path.join(video_save_dir, 'temp_'+video_name_enhancer)
             av_path_enhancer = os.path.join(video_save_dir, video_name_enhancer) 
@@ -275,6 +278,9 @@ class AnimateFromCoeff():
 
             try:
                 enhanced_images_gen_with_len = enhancer_generator_with_len(full_video_path, method=enhancer, bg_upsampler=background_enhancer)
+                print(f"after enhanced_images_gen_with_len - 3 {enhanced_images_gen_with_len}") 
+                print(f"after enhanced_images_gen_with_len - 3 {enhanced_path}") 
+
                 imageio.mimsave(enhanced_path, enhanced_images_gen_with_len, fps=float(25))
             except:
                 enhanced_images_gen_with_len = enhancer_list(full_video_path, method=enhancer, bg_upsampler=background_enhancer)
